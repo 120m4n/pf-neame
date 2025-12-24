@@ -8,7 +8,7 @@
 Toma la información de tus preciosos archivos (eso que llamas artefactos) y automáticamente diligencia los sagrados documentos PF-26 y PF-30. ¡Porque nada dice "productividad" como automatizar el papeleo que nadie quiere hacer!
 
 ## ¿Que resuelve?
-1. No mas devoluciones por los p&%@s documentos PF-26 y PF-30.
+1. No mas devoluciones por los p&%@s documentos PD-F26 y PD-F30.
 2. Documentacion más rapida y más tiempo en el OXXO.
 3. Menos peleas con los desarrolladores.
 4. Mejor QA
@@ -25,10 +25,10 @@ Ejecuta el comando mágico:
 ```sh
 ./pf-neame.exe este <ruta-al-archivo.dll-o-exe>
 ```
-Y voilà! Tus documentos PF-26 y PF-30 se llenarán solos. ¡O no! (Spoiler: probablemente sí, pero no los vamos a subir tambien!!).
+Y voilà! Tus documentos PD-F26 y PD-F30 se llenarán solos. ¡O no! (Spoiler: probablemente sí, pero no los vamos a subir tambien!!).
 
 ## Ejemplos
-- `./pf-neame.exe este miApp.exe` → Genera PF-26 con la informacion de QuAlidad. "Esta app no es un chiste".
+- `./pf-neame.exe este miApp.exe` → Genera PD-F26 con la informacion de QuAlidad. "Esta app no es un chiste".
 - `./pf-neame --help` → Muestra ayuda, porque incluso el buen software necesita instrucciones.
 
 ## Contribuciones
