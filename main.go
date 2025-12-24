@@ -13,7 +13,7 @@ import (
 func newRootCmd() *cobra.Command {
 	rootCmd := &cobra.Command{
 		Use:     "pf-neame",
-		Short:   "Utilidad CLI para que el QA se pf-nemee archivos .dll o .exe",
+		Short:   "Primero fíjate en la versión del archivo, luego me neameas",
 		Version: version.Version,
 	}
 
