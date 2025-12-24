@@ -1,7 +1,6 @@
 package excel
 
 import (
-	"os"
 	"testing"
 
 	"github.com/xuri/excelize/v2"
@@ -9,9 +8,9 @@ import (
 
 // TestEditPDF26_NewSheet prueba la creación de una nueva hoja FORMATO
 func TestEditPDF26_NewSheet(t *testing.T) {
-	// Crear un archivo Excel temporal
-	tmpFile := "/tmp/test_pf26_new.xlsx"
-	defer os.Remove(tmpFile)
+	// Crear un directorio temporal
+	tmpDir := t.TempDir()
+	tmpFile := tmpDir + "/test_pf26_new.xlsx"
 
 	// Crear un archivo Excel básico
 	f := excelize.NewFile()
@@ -76,9 +75,9 @@ func TestEditPDF26_NewSheet(t *testing.T) {
 
 // TestEditPDF26_ExistingSheet prueba la edición de una hoja FORMATO existente
 func TestEditPDF26_ExistingSheet(t *testing.T) {
-	// Crear un archivo Excel temporal con hoja FORMATO
-	tmpFile := "/tmp/test_pf26_existing.xlsx"
-	defer os.Remove(tmpFile)
+	// Crear un directorio temporal
+	tmpDir := t.TempDir()
+	tmpFile := tmpDir + "/test_pf26_existing.xlsx"
 
 	// Crear un archivo Excel con la hoja FORMATO
 	f := excelize.NewFile()
@@ -141,13 +140,17 @@ func TestEditPDF26_ExistingSheet(t *testing.T) {
 
 // TestEditPDF26_FileNotFound prueba el manejo de error cuando el archivo no existe
 func TestEditPDF26_FileNotFound(t *testing.T) {
+	// Usar un directorio temporal para un archivo inexistente
+	tmpDir := t.TempDir()
+	nonExistentFile := tmpDir + "/nonexistent_file.xlsx"
+	
 	data := PF26Data{
 		Product: "Test",
 		Client:  "Test",
 		Version: "1.0",
 	}
 
-	err := EditPDF26("/tmp/nonexistent_file.xlsx", data)
+	err := EditPDF26(nonExistentFile, data)
 	if err == nil {
 		t.Error("Se esperaba un error para archivo inexistente, pero no se obtuvo ninguno")
 	}

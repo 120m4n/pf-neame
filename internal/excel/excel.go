@@ -17,7 +17,11 @@ type PF26Data struct {
 }
 
 // editCell es una función genérica no exportada que recibe el nombre del archivo,
-// nombre de la hoja, fila y columna, y edita el valor de la celda especificada
+// nombre de la hoja, fila y columna, y edita el valor de la celda especificada.
+// Nota: Esta función abre y cierra el archivo para cada edición de celda, lo cual
+// es ineficiente para ediciones múltiples. Se mantiene para casos de uso específicos
+// donde se requiera editar una sola celda. Para ediciones múltiples, se recomienda
+// usar EditPDF26 o implementar una función que mantenga el archivo abierto.
 func editCell(fileName string, sheet string, row int, column string, value string) error {
 	// Abrir el archivo Excel
 	f, err := excelize.OpenFile(fileName)
@@ -25,9 +29,8 @@ func editCell(fileName string, sheet string, row int, column string, value strin
 		return fmt.Errorf("error al abrir el archivo: %w", err)
 	}
 	defer func() {
-		if err := f.Close(); err != nil {
-			fmt.Printf("advertencia: error al cerrar el archivo: %v\n", err)
-		}
+		// Silently ignore close errors in defer as we've already saved the file
+		_ = f.Close()
 	}()
 
 	// Construir la referencia de la celda (ej: "B11")
@@ -56,9 +59,8 @@ func EditPDF26(fileName string, data PF26Data) error {
 		return fmt.Errorf("error al abrir el archivo: %w", err)
 	}
 	defer func() {
-		if err := f.Close(); err != nil {
-			fmt.Printf("advertencia: error al cerrar el archivo: %v\n", err)
-		}
+		// Silently ignore close errors in defer as we've already saved the file
+		_ = f.Close()
 	}()
 
 	sheetName := "FORMATO"
