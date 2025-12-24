@@ -2,6 +2,7 @@ package este
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 
 	"github.com/120m4n/pf-neame/internal/utils"
@@ -23,8 +24,8 @@ func NewEsteCmd() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "este [filename]",
-		Short: "Procesa archivos .exe, .dll, .pgi o .bpl para obtener su información de versión",
-		Long:  `El comando este procesa archivos ejecutables y bibliotecas para extraer su información de versión.`,
+		Short: "Le pasas un .exe, .dll, .pgi o .bpl y le gritas al QA !pf-neamee este ¡",
+		Long:  `Le pasas un .exe, .dll, .pgi o .bpl y le gritas al QA !pf-neamee este. ¡Funciona solo en Windows!`,
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			opts.File = args[0]
@@ -77,29 +78,44 @@ func executeEste(opts *EsteOptions) error {
 			"¿Pero qué diablos haces? No puedo leer la versión de ese archivo",
 			"Eres tonto, el archivo no tiene información de versión o está roto",
 		},
+		"unknown_error": {
+			"Algo raro pasó, no sé qué diablos fue",
+			"¿Eres tonto? No entiendo qué pasó aquí",
+			"Mira el puto letrero: ocurrió un error desconocido",
+		},
 	}
+
+	// Inicializar generador de números aleatorios
+	// para seleccionar mensajes jocosos
+	indexRandom := rand.Intn(3)
 
 	// Validar que se proporcionó un archivo
 	if opts.File == "" {
-		return fmt.Errorf(humorousMessages["no_file"][0])
+		return fmt.Errorf(humorousMessages["no_file"][indexRandom])
 	}
 
 	// Validar extensión del archivo
 	if !utils.HasValidExtension(opts.File) {
-		return fmt.Errorf(humorousMessages["invalid_extension"][0])
+		return fmt.Errorf(humorousMessages["invalid_extension"][indexRandom])
 	}
 
 	// Verificar si el archivo existe
 	if _, err := os.Stat(opts.File); os.IsNotExist(err) {
-		return fmt.Errorf(humorousMessages["file_not_found"][0])
+		return fmt.Errorf(humorousMessages["unknown_error"][indexRandom])
 	}
 
 	// Obtener información de versión del archivo
 	result := utils.GetFileVersionInfo(opts.File)
-	
+
+	// Si hay un error (por ejemplo, en Linux), mostrar advertencia con tono jocoso
+	if result.Err != nil {
+		fmt.Printf("\n⚠️  Nota: %v\n", result.Err)
+		return fmt.Errorf(humorousMessages["version_error"][indexRandom])
+	}
+
 	// Mostrar información de versión
 	fmt.Printf("=== Información de Versión para: %s ===\n\n", opts.File)
-	
+
 	if result.Info != nil {
 		// Mostrar información disponible
 		printIfNotEmpty("Product Version", result.Info.ProductVersion())
@@ -111,12 +127,6 @@ func executeEste(opts *EsteOptions) error {
 		printIfNotEmpty("Original Filename", result.Info.OriginalFilename())
 		printIfNotEmpty("Internal Name", result.Info.InternalName())
 		printIfNotEmpty("Comments", result.Info.Comments())
-	}
-	
-	// Si hay un error (por ejemplo, en Linux), mostrar advertencia con tono jocoso
-	if result.Err != nil {
-		fmt.Printf("\n⚠️  Nota: %v\n", result.Err)
-		fmt.Println("¿Pero qué diablos haces usando Linux para esto? ¡Esto es para Windows, tonto!")
 	}
 
 	fmt.Println("\n¡Listo! Ahora deja de molestar y ponte a trabajar.")
