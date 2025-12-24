@@ -46,6 +46,13 @@ func runEste(opts *EsteOptions) error {
 	return executeEste(opts)
 }
 
+// printIfNotEmpty imprime un campo de información solo si no está vacío
+func printIfNotEmpty(label, value string) {
+	if value != "" {
+		fmt.Printf("%s: %s\n", label, value)
+	}
+}
+
 // executeEste is the core business logic for the este command
 func executeEste(opts *EsteOptions) error {
 	// Lista de mensajes jocosos para diferentes situaciones
@@ -95,33 +102,15 @@ func executeEste(opts *EsteOptions) error {
 	
 	if result.Info != nil {
 		// Mostrar información disponible
-		if result.Info.ProductVersion() != "" {
-			fmt.Printf("Product Version: %s\n", result.Info.ProductVersion())
-		}
-		if result.Info.FileVersion() != "" {
-			fmt.Printf("File Version: %s\n", result.Info.FileVersion())
-		}
-		if result.Info.CompanyName() != "" {
-			fmt.Printf("Company Name: %s\n", result.Info.CompanyName())
-		}
-		if result.Info.FileDescription() != "" {
-			fmt.Printf("File Description: %s\n", result.Info.FileDescription())
-		}
-		if result.Info.ProductName() != "" {
-			fmt.Printf("Product Name: %s\n", result.Info.ProductName())
-		}
-		if result.Info.LegalCopyright() != "" {
-			fmt.Printf("Legal Copyright: %s\n", result.Info.LegalCopyright())
-		}
-		if result.Info.OriginalFilename() != "" {
-			fmt.Printf("Original Filename: %s\n", result.Info.OriginalFilename())
-		}
-		if result.Info.InternalName() != "" {
-			fmt.Printf("Internal Name: %s\n", result.Info.InternalName())
-		}
-		if result.Info.Comments() != "" {
-			fmt.Printf("Comments: %s\n", result.Info.Comments())
-		}
+		printIfNotEmpty("Product Version", result.Info.ProductVersion())
+		printIfNotEmpty("File Version", result.Info.FileVersion())
+		printIfNotEmpty("Company Name", result.Info.CompanyName())
+		printIfNotEmpty("File Description", result.Info.FileDescription())
+		printIfNotEmpty("Product Name", result.Info.ProductName())
+		printIfNotEmpty("Legal Copyright", result.Info.LegalCopyright())
+		printIfNotEmpty("Original Filename", result.Info.OriginalFilename())
+		printIfNotEmpty("Internal Name", result.Info.InternalName())
+		printIfNotEmpty("Comments", result.Info.Comments())
 	}
 	
 	// Si hay un error (por ejemplo, en Linux), mostrar advertencia con tono jocoso
