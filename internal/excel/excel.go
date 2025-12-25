@@ -2,18 +2,47 @@ package excel
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/xuri/excelize/v2"
 )
 
 // PF26Data contiene los datos necesarios para editar el formato PF-26
 type PF26Data struct {
-	Product             string
-	Client              string
-	Version             string
-	ProductDescription  string
-	ClientDescription   string
-	VersionDescription  string
+	Product            string
+	Client             string
+	Version            string
+	ProductDescription string
+	ClientDescription  string
+	VersionDescription string
+}
+
+// normalizeToEnglish normaliza una cadena eliminando tildes, reemplazando ñ por n y espacios por guiones bajos
+func normalizeToEnglish(s string) string {
+	// Reemplazar vocales con tildes por vocales sin tilde (minúsculas)
+	s = strings.ReplaceAll(s, "á", "a")
+	s = strings.ReplaceAll(s, "é", "e")
+	s = strings.ReplaceAll(s, "í", "i")
+	s = strings.ReplaceAll(s, "ó", "o")
+	s = strings.ReplaceAll(s, "ú", "u")
+	s = strings.ReplaceAll(s, "ü", "u")
+
+	// Reemplazar vocales con tildes por vocales sin tilde (mayúsculas)
+	s = strings.ReplaceAll(s, "Á", "A")
+	s = strings.ReplaceAll(s, "É", "E")
+	s = strings.ReplaceAll(s, "Í", "I")
+	s = strings.ReplaceAll(s, "Ó", "O")
+	s = strings.ReplaceAll(s, "Ú", "U")
+	s = strings.ReplaceAll(s, "Ü", "U")
+
+	// Reemplazar ñ por n (minúscula y mayúscula)
+	s = strings.ReplaceAll(s, "ñ", "n")
+	s = strings.ReplaceAll(s, "Ñ", "N")
+
+	// Reemplazar espacios por guiones bajos
+	s = strings.ReplaceAll(s, " ", "_")
+
+	return s
 }
 
 // editCell es una función genérica no exportada que recibe el nombre del archivo,
@@ -22,7 +51,7 @@ type PF26Data struct {
 // es ineficiente para ediciones múltiples. Se mantiene para casos de uso específicos
 // donde se requiera editar una sola celda. Para ediciones múltiples, se recomienda
 // usar EditPDF26 o implementar una función que mantenga el archivo abierto.
-func editCell(fileName string, sheet string, row int, column string, value string) error {
+func EditCell(fileName string, sheet string, row int, column string, value string) error {
 	// Abrir el archivo Excel
 	f, err := excelize.OpenFile(fileName)
 	if err != nil {
@@ -111,7 +140,8 @@ func EditPDF26(fileName string, data PF26Data) error {
 	}
 
 	// Guardar los cambios
-	if err := f.Save(); err != nil {
+	newFileName := normalizeToEnglish(data.VersionDescription) + "_PF-26.xlsx"
+	if err := f.SaveAs(newFileName); err != nil {
 		return fmt.Errorf("error al guardar el archivo: %w", err)
 	}
 
